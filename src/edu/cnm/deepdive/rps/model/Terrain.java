@@ -1,13 +1,13 @@
 package edu.cnm.deepdive.rps.model;
 
 import java.util.Random;
-
 public class Terrain {
 
   // Grid is assumed to be square!!
   private RpsBreed[][] grid;
   private Random rng;
   private Neighborhood neighborhood;
+  private long iterations;
 
   public Terrain(int size, Random rng, Neighborhood neighborhood) {
     grid = new RpsBreed[size][size];
@@ -16,12 +16,18 @@ public class Terrain {
   }
 
   public void reset() {
-    for (int row = 0; row < grid.length; row++) {
-      RpsBreed[] rowContents = grid[row];
-      for (int col = 0; col < rowContents.length; col++) {
-        rowContents[col] = RpsBreed.values()[rng.nextInt(RpsBreed.values().length)];
+    for (RpsBreed[] row : grid) {
+      for (int col = 0; col < row.length; col++) {
+        row[col] = RpsBreed.values()[rng.nextInt(RpsBreed.values().length)];
       }
     }
+//    for (int row = 0; row < grid.length; row++) {
+//      RpsBreed[] rowContents = grid[row];
+//      for (int col = 0; col < rowContents.length; col++) {
+//        rowContents[col] = RpsBreed.values()[rng.nextInt(RpsBreed.values().length)];
+//      }
+//    }
+    iterations = 0;
   }
 
   public void step() {
@@ -36,6 +42,7 @@ public class Terrain {
     } else if (result > 0) {
       grid[defenderLocation.getRow()][defenderLocation.getColumn()] = attacker;
     }
+    iterations++;
   }
 
   public void step(int numSteps) {
@@ -45,8 +52,9 @@ public class Terrain {
   }
 
   /**
-   *Retuns a referance to the terrain contents. <strong> Important!</strong>
+   * Returns a reference to the terrain contents. <strong>Important!</strong>
    * This is <strong>not</strong> a safe copy.
+   *
    * @return
    */
   public RpsBreed[][] getGrid() {
@@ -57,6 +65,10 @@ public class Terrain {
     int row = (base.getRow() + offset.getRow() + grid.length) % grid.length;
     int col = (base.getColumn() + offset.getColumn() + grid.length) % grid.length;
     return new Location(row, col);
+  }
+
+  public long getIterations() {
+    return iterations;
   }
 
 }
